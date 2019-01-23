@@ -77,30 +77,59 @@ class booleanIndex(var docs: String) {
       return new booleanQuery(term1.query + " OR " + term2.query, result, false)
     }
 
-    /*
     def apply_AND(tokens:ArrayBuffer[booleanQuery]):ArrayBuffer[booleanQuery] ={
       var i = 0
-      val resolved = ArrayBuffer[String]()
-      while (i+1 < tokens.length && tokens(i+1) != "AND"){
+      val resolved = ArrayBuffer[booleanQuery]()
+      while (i+2 < tokens.length && tokens(i+1).query != "AND"){
         resolved.append(tokens(i))
         i+=1
       }
 
-      conjunction(tokens(0), tokens(2))
+      resolved.append(conjunction(tokens(i), tokens(i+2)))
+      i+=3
 
-      return resolved.toArray
+      while(i < tokens.length){
+        resolved.append(tokens(i))
+        i+=1
+      }
+
+      return resolved
     }
-    */
+
+    def apply_OR(tokens:ArrayBuffer[booleanQuery]):ArrayBuffer[booleanQuery] ={
+      var i = 0
+      val resolved = ArrayBuffer[booleanQuery]()
+      while (i+2 < tokens.length && tokens(i+1).query != "OR"){
+        resolved.append(tokens(i))
+        i+=1
+      }
+
+      resolved.append(disjunction(tokens(i), tokens(i+2)))
+      i+=3
+
+      while(i < tokens.length){
+        resolved.append(tokens(i))
+        i+=1
+      }
+
+      return resolved
+    }
 
 
     var query = ArrayBuffer[booleanQuery]()
+    var valid = false
     for(token:String <- input.split("[ ]+")){
       query.append(new booleanQuery(token, inverted(token), true))
+      if (token == "AND" || token == "OR") valid = true
     }
+
+    if (!valid) return ArrayBuffer[String]("Invalid query")
 
     while (query.length > 3){
       if (query.map(_.query).contains("AND")){
-        //query = apply_AND(query)
+        query = apply_AND(query)
+      } else if (query.map(_.query).contains("OR")){
+        query = apply_OR(query)
       }
     }
 

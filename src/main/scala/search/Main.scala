@@ -9,4 +9,7 @@ object Main extends App {
   println(index.inverted)
   println(index.search("schizophrenia AND drug"))
   println(index.search("breakthrough OR new"))
+  println(index.search("schizophrenia AND breakthrough OR new"))
+  println(index.search("schizophrenia AND breakthrough AND new"))
+  println(index.search("schizophrenia breakthrough new"))
 }
