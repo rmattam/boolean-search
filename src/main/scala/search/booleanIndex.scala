@@ -5,23 +5,27 @@ import scala.collection.mutable.Map
 
 class booleanQuery(val query: String, val docs: ArrayBuffer[Int], val original: Boolean)
 
-class booleanIndex(var docs: String) {
+class booleanIndex() {
 
   var inverted = Map[String, ArrayBuffer[Int]]().withDefaultValue(ArrayBuffer[Int]())
   var docID = Map[Int, String]()
+  var document_count = 0
 
-  def build(): Unit = {
-      var Id = 0
-      for (lines <- docs.split('\n')) {
-        val line = lines.split("[ ]+")
-        Id += 1
-        docID = docID + (Id -> line(0))
-        for (i <- 1 until line.length){
-          val token = line(i)
-          if (!inverted.contains(token)) inverted.put(token, ArrayBuffer())
-          inverted(token).append(Id)
-        }
+  def build_from_string(docs: String): Unit = {
+      for (lines:String <- docs.split("\\r?\\n")){
+        add(lines)
       }
+  }
+
+  def add(lines: String): Unit ={
+    val line = lines.split("[ ]+")
+    document_count += 1
+    docID = docID + (document_count -> line(0))
+    for (i <- 1 until line.length){
+      val token = line(i)
+      if (!inverted.contains(token)) inverted.put(token, ArrayBuffer())
+      inverted(token).append(document_count)
+    }
   }
 
   /**

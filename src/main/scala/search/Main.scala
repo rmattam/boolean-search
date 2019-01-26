@@ -1,15 +1,36 @@
 package search
 
-object Main extends App {
+import Control._
 
-  var input = "Doc1 breakthrough  drug  for schizophrenia\nDoc2 new approach for treatment of schizophrenia\nDoc3 new hopes for schizophrenia patients\nDoc4 new schizophrenia drug"
-  var index = new booleanIndex(input)
-  index.build()
-  println(index.docs)
-  println(index.inverted)
-  println(index.search("schizophrenia AND drug"))
-  println(index.search("breakthrough OR new"))
-  println(index.search("schizophrenia AND breakthrough OR new"))
-  println(index.search("schizophrenia AND breakthrough AND new"))
-  println(index.search("schizophrenia breakthrough new"))
+object Main extends App{
+
+  if (args.length == 0) {
+    println("Missing commandline argument: <filename/location>. Please enter the filename of plain text file having new line delimited documents to be indexed!")
+  } else {
+    var index = new booleanIndex()
+    using(io.Source.fromFile(args(0))) { source => {
+      for (line <- source.getLines) {
+        index.add(line)
+      }
+    }
+    }
+
+    println("Documents have been Indexed Correctly!")
+    println("Enter your search query after the prompt. Type exit/quit to stop")
+
+    var query: String = ""
+    while (query != "exit" && query != "quit") {
+      query = scala.io.StdIn.readLine(">> ")
+      println(index.search(query))
+    }
+  }
+}
+
+object Control {
+  def using[A <: { def close(): Unit }, B](resource: A)(f: A => B): B =
+    try {
+      f(resource)
+    } finally {
+      resource.close()
+    }
 }
