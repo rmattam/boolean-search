@@ -53,6 +53,9 @@ class SearchSpec extends FlatSpec with Matchers {
     index.search("schizophrenia AND patients AND for") should equal (ArrayBuffer[String]("Doc3"))
   }
 
+  it should "return the complex query result for AND OR query 6" in {
+    index.search("drug OR treatment AND schizophrenia") should equal (ArrayBuffer[String]("Doc1", "Doc2", "Doc4"))
+  }
 
   it should "return the error message for the invalid query" in {
     index.search("schizophrenia breakthrough new") should equal (ArrayBuffer[String]("Invalid query"))
