@@ -49,12 +49,12 @@ AND drug?
 ArrayBuffer(Doc1, Doc4)
 ```
 
-What does the code return for the query: breakthrough OR new?
+2. What does the code return for the query: breakthrough OR new?
 ```
-ArrayBuffer(Doc1, Doc4)
+ArrayBuffer(Doc1, Doc2, Doc3, Doc4)
 ```
 
-What does the code return for the query: drug OR treatment AND schizophrenia?
+3. What does the code return for the query: drug OR treatment AND schizophrenia?
 
 ```
 ArrayBuffer(Doc1, Doc2, Doc4)
